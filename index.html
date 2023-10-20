@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Room</title>
+    <style>
+        /* Add your CSS styles for the chat room here */
+        .chat-box {
+            height: 300px;
+            overflow-y: scroll;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <h1>Chat Room</h1>
+
+    <div class="chat-box" id="chat-box">
+        <!-- Messages will be displayed here -->
+    </div>
+
+    <input type="text" id="message-input" placeholder="Type your message">
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        const socket = new WebSocket('ws://your-server-address:8765');
+
+        // Handle incoming messages
+        socket.addEventListener('message', (event) => {
+            const message = event.data;
+            displayMessage(message);
+        });
+
+        // Send a message
+        function sendMessage() {
+            const messageInput = document.getElementById('message-input');
+            const message = messageInput.value;
+            if (message) {
+                socket.send(message);
+                messageInput.value = '';
+                displayMessage(`You: ${message}`);
+            }
+        }
+
+        // Function to display a message in the chat box
+        function displayMessage(message) {
+            const chatBox = document.getElementById('chat-box');
+            const messageElement = document.createElement('p');
+            messageElement.textContent = message;
+            chatBox.appendChild(messageElement);
+            chatBox.scrollTop = chatBox.scrollHeight; // Auto-scroll to the latest message
+        }
+    </script>
+</body>
+</html>
